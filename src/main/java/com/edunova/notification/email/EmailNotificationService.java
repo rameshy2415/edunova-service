@@ -247,7 +247,7 @@ public class EmailNotificationService {
                                      Dear Parent/Guardian,
                                    </p>
                                    <p style="margin:0 0 16px 0; font-size:15px; line-height:24px; color:#555555; font-family:Arial, Helvetica, sans-serif;">
-                                     We are delighted to welcome <strong>{{fullName}}</strong> to our school family! This email confirms
+                                     We are delighted to welcome <strong>{{fullName}}</strong> to <strong>{{schoolName}}</strong>! This email confirms
                                      the successful onboarding and admission for the academic year <strong>{{currentEnrollment.academicYearLabel}}</strong>.
                                      Below are the enrollment and personal details on record.
                                    </p>

@@ -21,13 +21,13 @@ public class StudentEnrollmentRequest {
     @Size(max = 150)
     private String name;
 
-    private LocalDate dob;
+    private LocalDate dateOfBirth;
 
     @NotBlank
     private String gender;
 
     @Size(max = 5)
-    private String blood;
+    private String bloodGroup;
 
     @NotBlank
     private String studentClass;
