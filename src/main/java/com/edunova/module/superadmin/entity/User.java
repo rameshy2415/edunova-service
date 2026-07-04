@@ -1,6 +1,5 @@
 package com.edunova.module.superadmin.entity;
 
-import com.edunova.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

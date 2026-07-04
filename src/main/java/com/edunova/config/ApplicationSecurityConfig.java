@@ -5,6 +5,7 @@ import com.edunova.filter.AuthoritiesLoggingAfterFilter;
 import com.edunova.filter.AuthoritiesLoggingAtFilter;
 import com.edunova.filter.JwtAuthenticationFilter;
 import com.edunova.filter.RequestValidationBeforeFilter;
+import com.edunova.module.superadmin.repository.UserRepository;
 import com.edunova.util.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class ApplicationSecurityConfig {
 
     private final ApplicationUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     // ── Public endpoints ──────────────────────────────────────
     private static final String[] PUBLIC_PATHS = {
@@ -77,7 +79,7 @@ public class ApplicationSecurityConfig {
                 .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
 //                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                //.addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService, userRepository), UsernamePasswordAuthenticationFilter.class)
                 .redirectToHttps(AbstractHttpConfigurer::disable) // Only HTTP
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/superadmin/**").hasAuthority(UserRole.SUPER_ADMIN.name())

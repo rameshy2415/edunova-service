@@ -4,11 +4,13 @@ package com.edunova.module.admin.student.service;
 import com.edunova.config.TenantContext;
 import com.edunova.exception.ErrorCode;
 import com.edunova.exception.AppException;
+import com.edunova.filter.LoggedInUserContextDetails;
 import com.edunova.module.admin.student.dto.*;
 import com.edunova.module.admin.student.entity.*;
 import com.edunova.module.admin.student.mapper.StudentMapper;
 import com.edunova.module.admin.student.repository.*;
 import com.edunova.module.admin.student.util.AdmissionNumberGenerator;
+import com.edunova.notification.email.EmailNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,11 +39,12 @@ public class StudentService {
     private final AdmissionNumberGenerator admissionGenerator;
     private final StudentMapper mapper;
     private final AcademicYearRepository academicYearRepository;
+    private final EmailNotificationService emailService;
 
     // ── Enroll new student ─────────────────────────────────────
     @Transactional
     public StudentDto.Response enroll(StudentEnrollmentRequest request) {
-        UUID schoolId  = request.getSchoolId();
+        UUID schoolId = request.getSchoolId();
         UUID createdBy = getCurrentUserId();
 
         // Auto-generate admission number if not provided
@@ -125,7 +128,17 @@ public class StudentService {
             enrollment = enrollIntoSection(student, schoolId, request.getSection(), request.getRoll(), request.getAcademicYearId());
         }
 
-        return buildFullResponse(student, enrollment);
+        var response = buildFullResponse(student, enrollment);
+
+        // 5. Audit / onboarding log
+        emailService.sendStudentWelcomeEmail(
+                request.getEmail(),
+                LoggedInUserContextDetails.getCurrentUser(),
+                response
+        );
+
+
+        return response;
     }
 
     // ── Get student by ID ──────────────────────────────────────

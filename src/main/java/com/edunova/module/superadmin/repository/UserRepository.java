@@ -2,6 +2,7 @@ package com.edunova.module.superadmin.repository;
 
 import com.edunova.enums.UserRole;
 import com.edunova.module.superadmin.entity.User;
+import com.edunova.module.superadmin.model.UserSchoolDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,5 +40,20 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByEmail(String email);
 
     boolean existsByMobile(String mobile);
+
+    @Query("""
+            SELECT new com.edunova.module.superadmin.model.UserSchoolDTO(
+                u.firstName,
+                u.lastName,
+                u.email,
+                u.role,
+                s.id,
+                s.name
+            )
+            FROM User u
+            LEFT JOIN u.school s
+            WHERE u.email = :email
+            """)
+    Optional<UserSchoolDTO> findByUserEmail(@Param("email") String email);
 
 }
