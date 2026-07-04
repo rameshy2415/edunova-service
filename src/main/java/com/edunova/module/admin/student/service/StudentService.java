@@ -129,26 +129,31 @@ public class StudentService {
     }
 
     // ── Get student by ID ──────────────────────────────────────
-    public StudentDto.Response getById(UUID studentId) {
-        UUID schoolId = TenantContext.getTenantId();
+    public StudentResponseDTO getById(UUID studentId) {
+        //UUID schoolId = TenantContext.getTenantId();
 
-        Student student = studentRepository
+       /* Student student = studentRepository
                 .findByIdAndSchoolId(studentId, schoolId)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));*/
+
+        StudentResponseDTO student = studentRepository
+                .findByStudentId(studentId)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
 
-        AcademicYear currentYear =new AcademicYear(); //academicYearService.getCurrentYearEntity(schoolId);
+       /* AcademicYear currentYear = academicYearService.getCurrentYearEntity(schoolId);
 
         StudentEnrollment enrollment = enrollmentRepository
                 .findDetailedEnrollment(studentId, currentYear.getId())
-                .orElse(null);
+                .orElse(null);*/
 
-        return buildFullResponse(student, enrollment);
+        return student;
+        //return buildFullResponse(student, enrollment);
     }
 
     // ── Get student by SchoolID ──────────────────────────────────────
-    public List<Student> getBySchoolId(UUID schoolId) {
+    public List<StudentResponseDTO> getBySchoolId(UUID schoolId) {
 
-        List<Student> student = studentRepository.findBySchoolId(schoolId).orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+        //List<StudentResponseDTO> student = studentRepository.findBySchoolId(schoolId).orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
 
        /* AcademicYear currentYear = academicYearService
                 .getCurrentYearEntity(schoolId);
@@ -158,7 +163,7 @@ public class StudentService {
 
         //return buildFullResponse(student, enrollment);
 
-        return student;
+        return studentRepository.findBySchoolId(schoolId);
     }
 
     // ── Search / list students ─────────────────────────────────

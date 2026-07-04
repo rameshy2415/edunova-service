@@ -1,9 +1,6 @@
 package com.edunova.module.admin.student.controller;
 
-import com.edunova.module.admin.student.dto.EnrollmentDto;
-import com.edunova.module.admin.student.dto.ParentDto;
-import com.edunova.module.admin.student.dto.StudentDto;
-import com.edunova.module.admin.student.dto.StudentEnrollmentRequest;
+import com.edunova.module.admin.student.dto.*;
 import com.edunova.module.admin.student.entity.Student;
 import com.edunova.module.admin.student.service.ParentService;
 import com.edunova.module.admin.student.service.StudentService;
@@ -32,15 +29,6 @@ public class StudentController {
     private final StudentService studentService;
     private final ParentService parentService;
 
-    // ── Enroll new student ─────────────────────────────────────
-    /*@PostMapping
-    @PreAuthorize("hasAnyRole('SCHOOL_ADMIN')")
-    public ResponseEntity<com.edunova.module.admin.student.dto.ApiResponse<StudentDto.Response>> enroll(@Valid @RequestBody StudentDto.EnrollRequest request) {
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(com.edunova.module.admin.student.dto.ApiResponse.success("Student enrolled successfully", studentService.enroll(request)));
-    }*/
-
     @PostMapping
     @PreAuthorize("hasAuthority('SCHOOL_ADMIN')")
     public ResponseEntity<com.edunova.module.admin.student.dto.ApiResponse<StudentDto.Response>> enroll(@Valid @RequestBody StudentEnrollmentRequest request) {
@@ -49,21 +37,22 @@ public class StudentController {
                 .body(com.edunova.module.admin.student.dto.ApiResponse.success("Student enrolled successfully", studentService.enroll(request)));
     }
 
-    @GetMapping("/{schoolId}")
+    @GetMapping("/list/{schoolId}")
     @PreAuthorize("hasAuthority('SCHOOL_ADMIN')")
-    public ResponseEntity<List<Student>> fetchStudents(@PathVariable UUID schoolId) {
+    public ResponseEntity<List<StudentResponseDTO>> studentsList(@PathVariable UUID schoolId) {
 
         return ResponseEntity.status(HttpStatus.OK).body(studentService.getBySchoolId(schoolId));
     }
 
-   /* // ── Get student by ID ──────────────────────────────────────
+    // ── Get student by ID ──────────────────────────────────────
     @GetMapping("/{studentId}")
-    @PreAuthorize("hasAnyRole('SCHOOL_ADMIN','PRINCIPAL','TEACHER','CLERK')")
-    public ResponseEntity<com.edunova.module.admin.student.dto.ApiResponse<StudentDto.Response>> getById(
-            @PathVariable UUID studentId) {
-
-        return ResponseEntity.ok(ApiResponse.success(studentService.getById(studentId)));
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN')")
+    public ResponseEntity<StudentResponseDTO> getById(@PathVariable UUID studentId) {
+        //return ResponseEntity.ok(ApiResponse.success(studentService.getById(studentId)));
+        return ResponseEntity.status(HttpStatus.OK).body(studentService.getById(studentId));
     }
+
+   /*
 
     // ── Search students ────────────────────────────────────────
     @GetMapping

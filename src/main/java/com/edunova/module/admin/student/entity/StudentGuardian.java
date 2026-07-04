@@ -21,6 +21,10 @@ public class StudentGuardian {
     @Column(name = "student_id", nullable = false)
     private UUID studentId;
 
+    /*@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;*/
+
     @Column(name = "father_name", length = 150)
     private String father;
 

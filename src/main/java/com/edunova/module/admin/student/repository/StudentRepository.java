@@ -1,5 +1,6 @@
 package com.edunova.module.admin.student.repository;
 
+import com.edunova.module.admin.student.dto.StudentResponseDTO;
 import com.edunova.module.admin.student.entity.Student;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +19,90 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     Optional<Student> findByIdAndSchoolId(UUID id, UUID schoolId);
 
     @Query("""
-        SELECT s FROM Student s
-        WHERE s.schoolId = :schoolId
-        ORDER BY s.name ASC
-    """)
-    Optional<List<Student>> findBySchoolId(@Param("schoolId") UUID schoolId);
+               SELECT new com.edunova.module.admin.student.dto.StudentResponseDTO(
+                   s.id,
+                   s.schoolId,
+                   s.admissionNo,
+                   s.name,
+                   s.dateOfBirth,
+                   s.gender,
+                   s.bloodGroup,
+                   s.nationality,
+                   s.religion,
+                   s.category,
+                   s.motherTongue,
+                   s.aadhaarNo,
+                   s.photoUrl,
+                   s.status,
+                   s.address,
+                   s.previousSchool,
+                   s.admissionDate,
+                   s.leavingDate,
+                   s.leavingReason,
+                   s.notes,
+                   s.createdAt,
+                   s.updatedAt,
+                   s.isActive,
+                   sec.displayName,
+                   se.rollNumber,
+                   sg.father,
+                   sg.mother,
+                   sg.phone,
+                   sg.altPhone,
+                   sg.email,
+                   sg.address,
+                   sg.emergencyContact
+               ) FROM StudentEnrollment se
+                 JOIN se.student s
+                 JOIN se.section sec
+                 LEFT JOIN StudentGuardian sg ON sg.studentId = s.id
+                 WHERE s.id = :id
+            """)
+    Optional<StudentResponseDTO> findByStudentId(@Param("id") UUID id);
+
+
+    @Query("""
+               SELECT new com.edunova.module.admin.student.dto.StudentResponseDTO(
+                   s.id,
+                   s.schoolId,
+                   s.admissionNo,
+                   s.name,
+                   s.dateOfBirth,
+                   s.gender,
+                   s.bloodGroup,
+                   s.nationality,
+                   s.religion,
+                   s.category,
+                   s.motherTongue,
+                   s.aadhaarNo,
+                   s.photoUrl,
+                   s.status,
+                   s.address,
+                   s.previousSchool,
+                   s.admissionDate,
+                   s.leavingDate,
+                   s.leavingReason,
+                   s.notes,
+                   s.createdAt,
+                   s.updatedAt,
+                   s.isActive,
+                   sec.displayName,
+                   se.rollNumber,
+                   sg.father,
+                   sg.mother,
+                   sg.phone,
+                   sg.altPhone,
+                   sg.email,
+                   sg.address,
+                   sg.emergencyContact
+               ) FROM StudentEnrollment se
+                 JOIN se.student s
+                 JOIN se.section sec
+                 LEFT JOIN StudentGuardian sg ON sg.studentId = s.id
+                 WHERE s.schoolId = :schoolId
+                 ORDER BY s.name ASC
+            """)
+    List<StudentResponseDTO> findBySchoolId(@Param("schoolId") UUID schoolId);
 
     boolean existsBySchoolIdAndAdmissionNo(UUID schoolId, String admissionNo);
 
@@ -45,15 +125,15 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                                   Pageable pageable);*/
 
     @Query("""
-        SELECT s FROM Student s
-        WHERE s.schoolId = :schoolId
-        AND (
-            :search IS NULL
-            OR LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%'))
-            OR LOWER(s.admissionNo) LIKE LOWER(CONCAT('%', :search, '%'))
-        )
-        ORDER BY s.name ASC
-    """)
+                SELECT s FROM Student s
+                WHERE s.schoolId = :schoolId
+                AND (
+                    :search IS NULL
+                    OR LOWER(s.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(s.admissionNo) LIKE LOWER(CONCAT('%', :search, '%'))
+                )
+                ORDER BY s.name ASC
+            """)
     Page<Student> searchStudents(UUID schoolId,
                                  Boolean isActive,
                                  String search,
@@ -64,11 +144,11 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     // Latest admission number for auto-generation
     @Query("""
-        SELECT s.admissionNo FROM Student s
-        WHERE s.schoolId = :schoolId
-        AND s.admissionNo IS NOT NULL
-        ORDER BY s.createdAt DESC
-        LIMIT 1
-    """)
+                SELECT s.admissionNo FROM Student s
+                WHERE s.schoolId = :schoolId
+                AND s.admissionNo IS NOT NULL
+                ORDER BY s.createdAt DESC
+                LIMIT 1
+            """)
     Optional<String> findLatestAdmissionNo(UUID schoolId);
 }
