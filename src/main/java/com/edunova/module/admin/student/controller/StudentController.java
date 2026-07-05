@@ -1,6 +1,7 @@
 package com.edunova.module.admin.student.controller;
 
 import com.edunova.module.admin.student.dto.*;
+import com.edunova.module.admin.student.dto.ApiResponse;
 import com.edunova.module.admin.student.entity.Student;
 import com.edunova.module.admin.student.service.ParentService;
 import com.edunova.module.admin.student.service.StudentService;
@@ -47,9 +48,8 @@ public class StudentController {
     // ── Get student by ID ──────────────────────────────────────
     @GetMapping("/{studentId}")
     @PreAuthorize("hasAuthority('SCHOOL_ADMIN')")
-    public ResponseEntity<StudentResponseDTO> getById(@PathVariable UUID studentId) {
-        //return ResponseEntity.ok(ApiResponse.success(studentService.getById(studentId)));
-        return ResponseEntity.status(HttpStatus.OK).body(studentService.getById(studentId));
+    public ResponseEntity<ApiResponse<StudentDto.StudentResponse>> getById(@PathVariable UUID studentId) {
+        return ResponseEntity.ok(ApiResponse.success(studentService.getById(studentId)));
     }
 
    /*

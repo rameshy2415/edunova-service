@@ -16,63 +16,37 @@ import java.util.UUID;
 public class StudentResponseDTO {
 
     private UUID id;
-
     private UUID schoolId;
-
     private String admissionNo;
-
     private String name;
-
     private LocalDate dateOfBirth;
-
     private String gender;
-
     private String bloodGroup;
-
     //@Builder.Default
     private String nationality ;
-
     private String religion;
-
     //@Builder.Default
     private String category ;
-
     private String motherTongue;
-
     private String aadhaarNo;
-
     private String photoUrl;
-
     //@Builder.Default
     private String status;// = "Active";
-
     private String address;
-
     private String previousSchool;
-
     //@Builder.Default
     private LocalDate admissionDate;// = LocalDate.now();
-
     private LocalDate leavingDate;
-
     private String leavingReason;
-
     private String notes;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
-
     //@Builder.Default
     private Boolean isActive;// = true;
-
-
     //Enrolls details
     private String grade;
 
     private String roll;
-
-
     private String father;
     private String mother;
     private String phone;

@@ -2,8 +2,8 @@ package com.edunova.module.admin.student.service;
 
 
 import com.edunova.config.TenantContext;
-import com.edunova.exception.ErrorCode;
 import com.edunova.exception.AppException;
+import com.edunova.exception.ErrorCode;
 import com.edunova.filter.LoggedInUserContextDetails;
 import com.edunova.module.admin.student.dto.*;
 import com.edunova.module.admin.student.entity.*;
@@ -20,8 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,6 +39,7 @@ public class StudentService {
     private final StudentMapper mapper;
     private final AcademicYearRepository academicYearRepository;
     private final EmailNotificationService emailService;
+    private final GradeRepository gradeRepository;
 
     // ── Enroll new student ─────────────────────────────────────
     @Transactional
@@ -142,8 +142,9 @@ public class StudentService {
     }
 
     // ── Get student by ID ──────────────────────────────────────
-    public StudentResponseDTO getById(UUID studentId) {
+    public StudentDto.StudentResponse getById(UUID studentId) {
         //UUID schoolId = TenantContext.getTenantId();
+        //StudentDto.Response
 
        /* Student student = studentRepository
                 .findByIdAndSchoolId(studentId, schoolId)
@@ -153,13 +154,22 @@ public class StudentService {
                 .findByStudentId(studentId)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
 
+        var schoolId = LoggedInUserContextDetails.getCurrentUser().getSchoolId();
+        var grade = gradeRepository.findAllGradeBySchoolId(schoolId);
+
+        var grades = getGrades( schoolId);
+
        /* AcademicYear currentYear = academicYearService.getCurrentYearEntity(schoolId);
 
         StudentEnrollment enrollment = enrollmentRepository
                 .findDetailedEnrollment(studentId, currentYear.getId())
                 .orElse(null);*/
 
-        return student;
+        return StudentDto.StudentResponse.builder()
+                .student(student)
+                .grade(grade)
+                .grades(grades)
+                .build();
         //return buildFullResponse(student, enrollment);
     }
 
@@ -379,5 +389,38 @@ public class StudentService {
             return (UUID) auth.getPrincipal();
         }
         return null;
+    }
+
+    public List<GradeResponse> getGrades(UUID schoolId) {
+
+        List<GradeSectionDTO> rows = gradeRepository.findGradesWithSections(schoolId);
+
+        Map<UUID, GradeResponse> map = new LinkedHashMap<>();
+
+        for (GradeSectionDTO row : rows) {
+
+            GradeResponse grade = map.computeIfAbsent(
+                    row.gradeId(),
+                    id -> GradeResponse.builder()
+                            .id(row.gradeId())
+                            .name(row.gradeName())
+                            .displayName(row.gradeDisplayName())
+                            .order(row.order())
+                            .sections(new ArrayList<>())
+                            .build()
+            );
+
+            if (row.sectionId() != null) {
+                grade.getSections().add(
+                        SectionResponse.builder()
+                                .id(row.sectionId())
+                                .name(row.sectionName())
+                                .displayName(row.sectionDisplayName())
+                                .build()
+                );
+            }
+        }
+
+        return new ArrayList<>(map.values());
     }
 }

@@ -13,7 +13,7 @@ public class ApiResponse<T> {
 
     private boolean success;
     private String  message;
-    private T       data;
+    private T       content;
     private String  errorCode;
 
     @Builder.Default
@@ -23,7 +23,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
                 .success(true)
-                .data(data)
+                .content(data)
                 .build();
     }
 
@@ -31,7 +31,7 @@ public class ApiResponse<T> {
         return ApiResponse.<T>builder()
                 .success(true)
                 .message(message)
-                .data(data)
+                .content(data)
                 .build();
     }
 

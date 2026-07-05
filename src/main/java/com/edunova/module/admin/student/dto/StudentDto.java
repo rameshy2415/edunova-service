@@ -78,6 +78,17 @@ public class StudentDto {
         private LocalDateTime             createdAt;
     }
 
+    // ── Student/Parent/Enroll response ───────────────────────────────────────
+    @Data
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class StudentResponse {
+        private StudentResponseDTO student;
+        private List<GradeDTO> grade;
+        private List<GradeResponse> grades;
+
+    }
+
     // ── Enrollment into section ────────────────────────────────
     @Data
     public static class EnrollToSectionRequest {
