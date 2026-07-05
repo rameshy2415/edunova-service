@@ -84,8 +84,7 @@ public class StudentDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class StudentResponse {
         private StudentResponseDTO student;
-        private List<GradeDTO> grade;
-        private List<GradeResponse> grades;
+        private List<GradeResponse> grade;
 
     }
 

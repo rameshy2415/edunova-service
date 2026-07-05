@@ -155,9 +155,10 @@ public class StudentService {
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
 
         var schoolId = LoggedInUserContextDetails.getCurrentUser().getSchoolId();
-        var grade = gradeRepository.findAllGradeBySchoolId(schoolId);
+        //var grade = gradeRepository.findAllGradeBySchoolId(schoolId);
+        var gradesList  =gradeRepository.findGradesWithSections(schoolId);
 
-        var grades = getGrades( schoolId);
+        var grade = getGrades(gradesList);
 
        /* AcademicYear currentYear = academicYearService.getCurrentYearEntity(schoolId);
 
@@ -168,7 +169,6 @@ public class StudentService {
         return StudentDto.StudentResponse.builder()
                 .student(student)
                 .grade(grade)
-                .grades(grades)
                 .build();
         //return buildFullResponse(student, enrollment);
     }
@@ -391,9 +391,7 @@ public class StudentService {
         return null;
     }
 
-    public List<GradeResponse> getGrades(UUID schoolId) {
-
-        List<GradeSectionDTO> rows = gradeRepository.findGradesWithSections(schoolId);
+    public List<GradeResponse> getGrades(List<GradeSectionDTO> rows) {
 
         Map<UUID, GradeResponse> map = new LinkedHashMap<>();
 

@@ -44,7 +44,8 @@ public class StudentResponseDTO {
     //@Builder.Default
     private Boolean isActive;// = true;
     //Enrolls details
-    private String grade;
+    private UUID grade;
+    private UUID section;
 
     private String roll;
     private String father;
@@ -55,7 +56,7 @@ public class StudentResponseDTO {
     private String guardianAddress;
     private String emergencyContact;
 
-    public StudentResponseDTO(UUID id, UUID schoolId, String admissionNo, String name, LocalDate dateOfBirth, String gender, String bloodGroup, String nationality, String religion, String category, String motherTongue, String aadhaarNo, String photoUrl, String status, String address, String previousSchool, LocalDate admissionDate, LocalDate leavingDate, String leavingReason, String notes, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, String grade, String roll, String father, String mother, String phone, String altPhone, String email, String guardianAddress, String emergencyContact) {
+    public StudentResponseDTO(UUID id, UUID schoolId, String admissionNo, String name, LocalDate dateOfBirth, String gender, String bloodGroup, String nationality, String religion, String category, String motherTongue, String aadhaarNo, String photoUrl, String status, String address, String previousSchool, LocalDate admissionDate, LocalDate leavingDate, String leavingReason, String notes, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean isActive, UUID grade,UUID section, String roll, String father, String mother, String phone, String altPhone, String email, String guardianAddress, String emergencyContact) {
         this.id = id;
         this.schoolId = schoolId;
         this.admissionNo = admissionNo;
@@ -80,6 +81,7 @@ public class StudentResponseDTO {
         this.updatedAt = updatedAt;
         this.isActive = isActive;
         this.grade = grade;
+        this.section = section;
         this.roll = roll;
         this.father = father;
         this.mother = mother;

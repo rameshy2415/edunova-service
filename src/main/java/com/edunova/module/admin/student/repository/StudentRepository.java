@@ -43,7 +43,8 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                    s.createdAt,
                    s.updatedAt,
                    s.isActive,
-                   sec.displayName,
+                   g.id,
+                   sec.id,
                    se.rollNumber,
                    sg.father,
                    sg.mother,
@@ -55,6 +56,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                ) FROM StudentEnrollment se
                  JOIN se.student s
                  JOIN se.section sec
+                 JOIN sec.grade g
                  LEFT JOIN StudentGuardian sg ON sg.studentId = s.id
                  WHERE s.id = :id
             """)
@@ -86,7 +88,8 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                    s.createdAt,
                    s.updatedAt,
                    s.isActive,
-                   sec.displayName,
+                   g.id,
+                   sec.id,
                    se.rollNumber,
                    sg.father,
                    sg.mother,
@@ -98,6 +101,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                ) FROM StudentEnrollment se
                  JOIN se.student s
                  JOIN se.section sec
+                 JOIN sec.grade g
                  LEFT JOIN StudentGuardian sg ON sg.studentId = s.id
                  WHERE s.schoolId = :schoolId
                  ORDER BY s.name ASC
