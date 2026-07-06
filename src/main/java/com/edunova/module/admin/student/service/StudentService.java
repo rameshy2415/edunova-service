@@ -189,6 +189,18 @@ public class StudentService {
         return studentRepository.findBySchoolId(schoolId);
     }
 
+    // ── Get student by SchoolID ──────────────────────────────────────
+    public StudentDto.Grade getGradesBySchoolId(UUID schoolId) {
+
+        var gradesList  =gradeRepository.findGradesWithSections(schoolId);
+
+        var grade = getGrades(gradesList);
+
+        return StudentDto.Grade.builder()
+                .grade(grade)
+                .build();
+    }
+
     // ── Search / list students ─────────────────────────────────
     public Page<StudentDto.Response> search(String search,
                                              Boolean isActive,

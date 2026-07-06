@@ -29,9 +29,6 @@ public class StudentEnrollmentRequest {
     @Size(max = 5)
     private String bloodGroup;
 
-    @NotBlank
-    private String studentClass;
-
     private String roll;
 
     //@NotBlank

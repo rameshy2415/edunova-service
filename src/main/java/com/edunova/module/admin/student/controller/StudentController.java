@@ -52,6 +52,25 @@ public class StudentController {
         return ResponseEntity.ok(ApiResponse.success(studentService.getById(studentId)));
     }
 
+    // ── Update student ─────────────────────────────────────────
+    @PatchMapping("/{studentId}")
+    @PreAuthorize("hasAnyRole('SCHOOL_ADMIN','PRINCIPAL','CLERK')")
+    public ResponseEntity<ApiResponse<StudentDto.Response>> update(
+            @PathVariable UUID studentId,
+            @Valid @RequestBody StudentDto.UpdateRequest request) {
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Student updated",
+                        studentService.update(studentId, request)));
+    }
+
+
+    @GetMapping("/{schoolId}/grades")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN')")
+    public ResponseEntity<ApiResponse<StudentDto.Grade>> getGrade(@PathVariable UUID schoolId) {
+        return ResponseEntity.ok(ApiResponse.success(studentService.getGradesBySchoolId(schoolId)));
+    }
+
    /*
 
     // ── Search students ────────────────────────────────────────

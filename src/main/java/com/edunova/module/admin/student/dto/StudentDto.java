@@ -98,4 +98,12 @@ public class StudentDto {
         // Optional — if null, current academic year is used
         private UUID   academicYearId;
     }
+
+    // ── Student/Parent/Enroll response ───────────────────────────────────────
+    @Data
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Grade {
+        private List<GradeResponse> grade;
+    }
 }
