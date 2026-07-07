@@ -5,6 +5,7 @@ import com.edunova.auth.dto.AuthRequest;
 import com.edunova.common.dto.AuthResponse;
 import com.edunova.common.dto.UserSummaryResponse;
 import com.edunova.exception.BusinessException;
+import com.edunova.module.admin.student.repository.AcademicYearRepository;
 import com.edunova.module.superadmin.entity.User;
 import com.edunova.module.superadmin.repository.UserRepository;
 import com.edunova.notification.email.EmailNotificationService;
@@ -33,6 +34,7 @@ public class AuthService {
     private final PasswordEncoder       passwordEncoder;
     private final JwtUtil jwtUtil;
     private final EmailNotificationService emailService;
+    private final AcademicYearRepository academicYearRepository;
 
     // ── Login ──────────────────────────────────────────────────
 
@@ -215,6 +217,13 @@ public class AuthService {
 
         var expiryAt = user.getPasswordResetExpires();
 
+
+        //TODO need to  find out better way to set the School details to the claim
+        UUID academicYearId= null;
+        if(user.getSchool() != null){
+            academicYearId =  academicYearRepository.findIdBySchoolIdAndIsCurrentTrue(user.getSchool().getId());
+        }
+
         return new UserSummaryResponse(
                 user.getId(),
                 user.getFirstName()+ " " +user.getLastName(),       // name field — replace with a name column if added
@@ -222,6 +231,7 @@ public class AuthService {
                 user.getRole(),
                 user.getSchool() != null ? user.getSchool().getId()   : null,
                 user.getSchool() != null ? user.getSchool().getName() : null,
+                academicYearId,
                 user.getAvatarUrl(),
                 user.getIsFirstTimeLogin(),
                 (expiryAt == null) ? null :  LocalDateTime.ofInstant(user.getPasswordResetExpires(), ZoneId.systemDefault())

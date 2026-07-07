@@ -21,6 +21,11 @@ public interface AcademicYearRepository extends JpaRepository<AcademicYear, UUID
             """)
     Optional<AcademicYear> findBySchoolIdAndIsCurrentTrue(UUID schoolId);
 
+    @Query("""
+            select a.id from AcademicYear a where a.schoolId =:schoolId and a.isCurrent = true
+            """)
+    UUID findIdBySchoolIdAndIsCurrentTrue(UUID schoolId);
+
     boolean existsBySchoolIdAndLabel(UUID schoolId, String label);
 
     // Unset all current flags before setting a new one

@@ -10,6 +10,7 @@ public record UserSummaryResponse(
         String role,
         UUID schoolId,
         String schoolName,
+        UUID academicYearId,
         String avatarUrl,
         boolean isFirstTime,
         LocalDateTime expiresAt
