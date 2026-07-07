@@ -215,41 +215,81 @@ public class StudentService {
 
     // ── Update student ─────────────────────────────────────────
     @Transactional
-    public StudentDto.Response update(UUID studentId,
-                                       StudentDto.UpdateRequest request) {
-        UUID schoolId = TenantContext.getTenantId();
+    public StudentDto.Response update(UUID studentId, StudentEnrollmentRequest request) {
+        UUID schoolId = request.getSchoolId(); //TenantContext.getTenantId();
 
+
+        /*--Student details---*/
         Student student = studentRepository
                 .findByIdAndSchoolId(studentId, schoolId)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
 
-       /* if (request.getFirstName()   != null)
-            student.setFirstName(request.getFirstName().trim());
-        if (request.getLastName()    != null)
-            student.setLastName(request.getLastName().trim());*/
+        if (request.getName() != null)
+            student.setName(request.getName().trim());
         if (request.getDateOfBirth() != null)
             student.setDateOfBirth(request.getDateOfBirth());
-        if (request.getGender()      != null)
+        if (request.getGender() != null)
             student.setGender(request.getGender());
-        if (request.getAddress()     != null)
-            student.setAddress(request.getAddress());
-        if (request.getBloodGroup()  != null)
+        if (request.getBloodGroup() != null)
             student.setBloodGroup(request.getBloodGroup());
-        if (request.getPhotoUrl()    != null)
-            student.setPhotoUrl(request.getPhotoUrl());
-        if (request.getIsActive()    != null)
-            //student.setIsActive(request.getIsActive());
+        if (request.getNationality() != null)
+            student.setNationality(request.getNationality());
+        if (request.getReligion() != null)
+            student.setReligion(request.getReligion());
+        if (request.getCategory() != null)
+            student.setCategory(request.getCategory());
+        if (request.getStatus() != null) {
+            student.setStatus(request.getStatus());
+            student.setIsActive("Active".equals(request.getStatus()));
+        }
+        if (request.getAddress() != null)
+            student.setAddress(request.getAddress());
 
-        if (request.getAdmissionNo() != null &&
-                !request.getAdmissionNo().equals(student.getAdmissionNo())) {
-            if (studentRepository.existsBySchoolIdAndAdmissionNo(
-                    schoolId, request.getAdmissionNo())) {
-                throw new AppException(ErrorCode.ADMISSION_NO_EXISTS);
-            }
-            student.setAdmissionNo(request.getAdmissionNo());
+        var savedStudent = studentRepository.save(student);
+
+        /*--Academic details---*/
+        var sectionId = request.getSection();
+        Section section = sectionRepository.findByIdAndSchoolId(sectionId, schoolId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "Section not found"));
+
+        var year = academicYearRepository.findBySchoolIdAndIsCurrentTrue(schoolId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "No current academic year configured for this school"));
+
+
+        // Roll number uniqueness check//TODO need to re-visit in case user does not Change the section then there will be a problem
+        var rollNumber = request.getRoll();
+        if (rollNumber != null && enrollmentRepository.existsBySection_IdAndAcademicYear_IdAndRollNumber(sectionId, year.getId(), rollNumber)) {
+            throw new AppException(ErrorCode.DUPLICATE_ENTRY, "Roll number '" + rollNumber + "' already assigned in this section");
         }
 
-        return buildFullResponse(studentRepository.save(student), null);
+        var enrollment = enrollmentRepository.findDetailedEnrollment(studentId, request.getAcademicYearId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND, "Enrollment not found"));
+        enrollment.setStudent(student);
+        enrollment.setSection(section);
+        if (rollNumber != null)
+            enrollment.setRollNumber(rollNumber);
+
+
+        var savedEnrolled = enrollmentRepository.save(enrollment);
+
+
+        /*--Parents details---*/
+        var parent = guardianRepository.findParent(studentId).orElseThrow(() -> new AppException(ErrorCode.PARENT_NOT_FOUND));
+        if (request.getAddress() != null)
+            parent.setAddress(request.getAddress());
+        if (request.getFather() != null)
+            parent.setFather(request.getFather());
+        if (request.getMother() != null)
+            parent.setMother(request.getMother());
+        if (request.getPhone() != null)
+            parent.setPhone(request.getPhone());
+        if (request.getAltPhone() != null)
+            parent.setAltPhone(request.getAltPhone());
+        if (request.getEmail() != null)
+            parent.setEmail(request.getEmail());
+        if (request.getEmergencyContact() != null)
+            parent.setEmergencyContact(request.getEmergencyContact());
+
+        guardianRepository.save(parent);
+
+        return buildFullResponse(savedStudent, savedEnrolled);
     }
 
     // ── Enroll student into section ────────────────────────────
@@ -354,8 +394,7 @@ public class StudentService {
 
         // One enrollment per student per academic year
         if (enrollmentRepository.existsByStudent_IdAndAcademicYear_Id(student.getId(), year.getId())) {
-            throw new AppException(ErrorCode.DUPLICATE_ENTRY,
-                    "Student is already enrolled for this academic year");
+            throw new AppException(ErrorCode.DUPLICATE_ENTRY, "Student is already enrolled for this academic year");
         }
 
         // Roll number uniqueness check

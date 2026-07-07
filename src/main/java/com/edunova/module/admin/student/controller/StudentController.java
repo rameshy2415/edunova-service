@@ -53,11 +53,11 @@ public class StudentController {
     }
 
     // ── Update student ─────────────────────────────────────────
-    @PatchMapping("/{studentId}")
-    @PreAuthorize("hasAnyRole('SCHOOL_ADMIN','PRINCIPAL','CLERK')")
+    @PutMapping("/{studentId}")
+    @PreAuthorize("hasAuthority('SCHOOL_ADMIN')")
     public ResponseEntity<ApiResponse<StudentDto.Response>> update(
             @PathVariable UUID studentId,
-            @Valid @RequestBody StudentDto.UpdateRequest request) {
+            @Valid @RequestBody StudentEnrollmentRequest request) {
 
         return ResponseEntity.ok(
                 ApiResponse.success("Student updated",

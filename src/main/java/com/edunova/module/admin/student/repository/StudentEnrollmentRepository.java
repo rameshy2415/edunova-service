@@ -35,8 +35,7 @@ public interface StudentEnrollmentRepository
                                                   UUID academicYearId);
 
     // Roll number exists in section for academic year
-    boolean existsBySection_IdAndAcademicYear_IdAndRollNumber(
-            UUID sectionId, UUID academicYearId, String rollNumber);
+    boolean existsBySection_IdAndAcademicYear_IdAndRollNumber(UUID sectionId, UUID academicYearId, String rollNumber);
 
     // Enrollment with full details — used in attendance & fees
     @Query("""
@@ -48,6 +47,5 @@ public interface StudentEnrollmentRepository
         WHERE e.student.id = :studentId
         AND e.academicYear.id = :academicYearId
     """)
-    Optional<StudentEnrollment> findDetailedEnrollment(UUID studentId,
-                                                        UUID academicYearId);
+    Optional<StudentEnrollment> findDetailedEnrollment(UUID studentId, UUID academicYearId);
 }
