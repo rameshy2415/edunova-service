@@ -110,6 +110,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
             """)
     List<StudentResponseDTO> findBySchoolId(@Param("schoolId") UUID schoolId);
 
+
     boolean existsBySchoolIdAndAdmissionNo(UUID schoolId, String admissionNo);
 
     // Search students by name or admission number

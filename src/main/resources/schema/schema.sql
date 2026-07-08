@@ -401,12 +401,13 @@ CREATE TABLE attendance (
     section_id      UUID        NOT NULL REFERENCES sections(id) ON DELETE CASCADE,
     academic_year_id UUID       NOT NULL REFERENCES academic_years(id),
     date            DATE        NOT NULL,
-    status          VARCHAR(10) NOT NULL,
-    period          SMALLINT,              -- NULL = whole-day; 1-8 for period-wise
-    subject_id      UUID        REFERENCES subjects(id),
+    status          VARCHAR(10) NOT NULL,    -- 'PRESENT','ABSENT','LATE','HOLIDAY','LEAVE'
+    --period          SMALLINT,              -- NULL = whole-day; 1-8 for period-wise
+    --subject_id      UUID        REFERENCES subjects(id),--Need to Drop
     marked_by       UUID        REFERENCES users(id),
     note            TEXT,
-    marked_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    marked_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE UNIQUE INDEX uniq_attendance_student_date_period
 ON attendance (student_id, date, COALESCE(period, 0));

@@ -83,7 +83,8 @@ public class ApplicationSecurityConfig {
                 .redirectToHttps(AbstractHttpConfigurer::disable) // Only HTTP
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/superadmin/**").hasAuthority(UserRole.SUPER_ADMIN.name())
-                        .requestMatchers("/admin/students/**").hasAuthority(UserRole.SCHOOL_ADMIN.name())
+                        //.requestMatchers("/admin/students/**").hasAuthority(UserRole.SCHOOL_ADMIN.name())
+                        .requestMatchers("/admin/**").hasAuthority(UserRole.SCHOOL_ADMIN.name())
 //                        .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
 //                        .requestMatchers("/myLoans").hasRole("USER")
 //                        .requestMatchers("/myCards").hasRole("USER")
