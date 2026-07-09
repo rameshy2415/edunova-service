@@ -72,7 +72,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.getWriter().write("""
                         {
                             "message":"Access token expired",
-                            "code":"TOKEN_EXPIRED"
+                            "code":"TOKEN_EXPIRED",
+                            "status":"401"
                         }
                         """);
 
