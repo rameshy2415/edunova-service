@@ -47,8 +47,10 @@ public class AttendanceService {
     public AttendanceDto.SectionAttendanceResponse markBulk(
             AttendanceDto.BulkMarkRequest request) {
 
-        UUID schoolId = TenantContext.getTenantId();
-        UUID markedBy = getCurrentUserId();
+        UUID schoolId = LoggedInUserContextDetails.getCurrentUser().getSchoolId(); //TenantContext.getTenantId();
+        UUID markedBy = LoggedInUserContextDetails.getCurrentUser().getId();//getCurrentUserId();
+
+
 
         // Validate date is not in future
         if (request.getDate().isAfter(LocalDate.now())) {
@@ -67,7 +69,7 @@ public class AttendanceService {
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
                         "Section not found"));
 
-        AcademicYear year = null;//academicYearService.getCurrentYearEntity(schoolId);//TODO
+        AcademicYear year = academicYearService.getCurrentYearEntity(schoolId);
 
         // Validate date falls within academic year
         if (request.getDate().isBefore(year.getStartDate()) ||
@@ -79,8 +81,10 @@ public class AttendanceService {
         List<Attendance> saved = new ArrayList<>();
 
         for (AttendanceDto.StudentAttendance record : request.getRecords()) {
+            throw new AppException(ErrorCode.INVALID_REQUEST,
+                    "Cannot mark attendance for a future date");
 
-            Student student = studentRepository
+            /*Student student = studentRepository
                     .findByIdAndSchoolId(record.getStudentId(), schoolId)
                     .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND,
                             "Student not found: " + record.getStudentId()));
@@ -100,7 +104,7 @@ public class AttendanceService {
             attendance.setRemarks(record.getRemarks());
             attendance.setMarkedBy(markedBy);
 
-            saved.add(attendanceRepository.save(attendance));
+            saved.add(attendanceRepository.save(attendance));*/
         }
 
         log.info("Attendance marked for section [{}] date [{}] — {} records",

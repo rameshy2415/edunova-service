@@ -1,11 +1,14 @@
-// src/main/java/com/schoolmanagement/module/school/service/AcademicYearService.java
+
 package com.edunova.module.admin.student.service;
 
 
 import com.edunova.config.TenantContext;
 import com.edunova.exception.AppException;
 import com.edunova.exception.ErrorCode;
+import com.edunova.module.admin.student.entity.AcademicYear;
 import com.edunova.module.admin.student.repository.AcademicYearRepository;
+import com.edunova.module.superadmin.model.AcademicYearDto;
+import com.edunova.module.superadmin.mapper.SchoolMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AcademicYearService {
 
-    /*private final AcademicYearRepository academicYearRepository;
-    private final SchoolMapper           mapper;
+    private final AcademicYearRepository academicYearRepository;
+    private final SchoolMapper mapper;
 
     // ── Create academic year ───────────────────────────────────
     @Transactional
@@ -95,5 +98,5 @@ public class AcademicYearService {
                 .findBySchoolIdAndIsCurrentTrue(schoolId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
                         "No current academic year configured for this school"));
-    }*/
+    }
 }

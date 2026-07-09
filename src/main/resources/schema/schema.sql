@@ -397,6 +397,7 @@ ALTER TABLE sections
 -- ── Daily attendance ──────────────────────────────────────────
 CREATE TABLE attendance (
     id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+    school_id         UUID          NOT NULL REFERENCES schools(id), --Newly added
     student_id      UUID        NOT NULL REFERENCES students(id) ON DELETE CASCADE,
     section_id      UUID        NOT NULL REFERENCES sections(id) ON DELETE CASCADE,
     academic_year_id UUID       NOT NULL REFERENCES academic_years(id),
@@ -1000,14 +1001,14 @@ DECLARE
     v_year   SMALLINT := EXTRACT(YEAR  FROM NEW.date);
 BEGIN
     INSERT INTO attendance_summary (
-        student_id, section_id, academic_year_id,
-        month, year, working_days, present_days, absent_days, late_days, holiday_days
+        student_id, section_id, academic_year_id, month, year, working_days, present_days, absent_days, late_days, holiday_days
     )
     SELECT
         NEW.student_id,
         NEW.section_id,
         NEW.academic_year_id,
-        v_month, v_year,
+        v_month,
+        v_year,
         COUNT(*) FILTER (WHERE status <> 'H'),
         COUNT(*) FILTER (WHERE status = 'P'),
         COUNT(*) FILTER (WHERE status = 'A'),

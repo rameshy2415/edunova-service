@@ -19,6 +19,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<com.edunova.module.admin.student.dto.ApiResponse<Void>> handleAppException(AppException ex) {
+        log.warn("AppException: [{}] {}", ex.getErrorCode().getCode(), ex.getMessage());
+        return ResponseEntity
+                .status(ex.getErrorCode().getHttpStatus())
+                .body(com.edunova.module.admin.student.dto.ApiResponse.error(ex.getMessage(), ex.getErrorCode().getCode()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -43,6 +43,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("""
             SELECT new com.edunova.module.superadmin.model.UserSchoolDTO(
+                u.id,
                 u.firstName,
                 u.lastName,
                 u.email,
