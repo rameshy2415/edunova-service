@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = extractToken(request);
 
-        if (StringUtils.hasText(token)  && !jwtUtil.isRefreshToken(token)) {
+        if (StringUtils.hasText(token) && !jwtUtil.isRefreshToken(token)) {
             try {
                 jwtUtil.validateAndExtractClaims(token);
                 String userId = jwtUtil.extractUsername(token);
@@ -67,6 +67,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 log.warn("JWT Expired error: {}", e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+
+                response.getWriter().write("""
+                        {
+                            "message":"Access token expired",
+                            "code":"TOKEN_EXPIRED"
+                        }
+                        """);
+
+                return; // Stop processing
             } catch (Exception ex) {
                 log.warn("JWT processing failed: {}", ex.getMessage());
             }

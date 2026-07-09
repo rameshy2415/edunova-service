@@ -82,7 +82,7 @@ public class AuthService {
         }
         //UUID userId = jwtUtil.extractUserId(refreshToken);
         String email= jwtUtil.extractEmail(refreshToken);
-        User user   = userRepository.findByEmailAndSchoolIsNull(email).orElseThrow(() -> new BusinessException("USER_NOT_FOUND", "User not found."));
+        User user   = userRepository.findByEmail(email).orElseThrow(() -> new BusinessException("USER_NOT_FOUND", "User not found."));
 
         if (!user.getIsActive()) {
             throw new BusinessException("ACCOUNT_DISABLED", "Account is disabled.");
