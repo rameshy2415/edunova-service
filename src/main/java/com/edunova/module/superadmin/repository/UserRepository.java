@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 // ── UserRepository ─────────────────────────────────────────────────
@@ -56,5 +57,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             WHERE u.email = :email
             """)
     Optional<UserSchoolDTO> findByUserEmail(@Param("email") String email);
+
+
+    @Query("SELECT u FROM User u WHERE u.id in (:ids )")
+    List<User> findUserById(@Param("ids") Set<UUID> ids);
 
 }

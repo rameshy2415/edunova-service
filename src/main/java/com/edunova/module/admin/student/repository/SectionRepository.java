@@ -21,7 +21,7 @@ public interface SectionRepository extends JpaRepository<Section, UUID> {
 
     boolean existsByGrade_IdAndNameIgnoreCase(UUID gradeId, String name);
 
-    // All sections for a school with grade info (for listing)
+/*    // All sections for a school with grade info (for listing)
     @Query("""
         SELECT s FROM Section s
         JOIN FETCH s.grade g
@@ -29,5 +29,30 @@ public interface SectionRepository extends JpaRepository<Section, UUID> {
         AND s.isActive = true
         ORDER BY g.order ASC, s.name ASC
     """)
-    List<Section> findAllWithGradeBySchoolId(UUID schoolId);
+    List<Section> findAllWithGradeBySchoolId(UUID schoolId);*/
+
+    @Query("""
+                SELECT DISTINCT s
+                FROM StudentEnrollment se
+                JOIN se.section s
+                JOIN FETCH s.grade g
+                WHERE s.schoolId = :schoolId
+                  AND s.isActive = true
+                  AND se.isActive = true
+                ORDER BY g.order ASC, s.name ASC
+            """)
+    List<Section> findSectionsWithStudents(UUID schoolId);
+
+    @Query("""
+                SELECT DISTINCT s
+                FROM StudentEnrollment se
+                JOIN se.section s
+                JOIN FETCH s.grade g
+                WHERE s.schoolId = :schoolId
+                  AND se.academicYear.id = :academicYearId
+                  AND s.isActive = true
+                  AND se.isActive = true
+                ORDER BY g.order ASC, s.name ASC
+            """)
+    List<Section> findSectionsWithStudents(UUID schoolId, UUID academicYearId);//TODO will be using once academicYearId Is integrated
 }

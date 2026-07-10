@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -60,12 +61,13 @@ public class AttendanceDto {
     public static class Response {
         private UUID             id;
         private UUID             studentId;
-        private String           studentName;
-        private String           admissionNo;
+        private String           name;
+        private String           roll;
         private LocalDate        date;
         private AttendanceStatus status;
         private String           remarks;
-        private String           markedByName;
+        private String           markedBy;
+        private LocalDateTime    markedAt;
     }
 
     // ── Section attendance for a date (full list) ─────────────
@@ -77,14 +79,17 @@ public class AttendanceDto {
         private String            sectionName;
         private String            gradeName;
         private LocalDate         date;
-        private boolean           alreadyMarked;
-        private int               totalStudents;
-        private int               presentCount;
-        private int               absentCount;
-        private int               lateCount;
-        private int               leaveCount;
+        private LocalDateTime     markedAt;
+        private String            markedBy;
+        private boolean           marked;
+        private int               total;
+        private int               present;
+        private int               absent;
+        private int               late;
+        private int               leave;
         private List<Response>    records;
     }
+
 
     // ── Section and Student list ─────────────
     @Data

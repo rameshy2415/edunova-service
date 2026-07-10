@@ -56,6 +56,13 @@ public class AttendanceController {
                         attendanceService.getSectionAttendance(sectionId, date)));
     }
 
+    // ── Get section attendance for a date ─────────────────────
+    @GetMapping("/status")
+    @PreAuthorize("hasAnyAuthority('TEACHER','SCHOOL_ADMIN','PRINCIPAL','CLERK')")
+    public ResponseEntity<ApiResponse<List<AttendanceDto.SectionAttendanceResponse>>> getAttendanceStatus(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(ApiResponse.success(attendanceService.getAttendanceStatus(date)));
+    }
+
     // ── Get section attendance date range ─────────────────────
     @GetMapping("/section/{sectionId}/range")
     @PreAuthorize("hasAnyRole('TEACHER','SCHOOL_ADMIN','PRINCIPAL','CLERK')")

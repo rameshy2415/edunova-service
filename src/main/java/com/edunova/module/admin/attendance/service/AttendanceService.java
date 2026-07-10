@@ -18,6 +18,8 @@ import com.edunova.module.admin.student.repository.SectionRepository;
 import com.edunova.module.admin.student.repository.StudentEnrollmentRepository;
 import com.edunova.module.admin.student.repository.StudentRepository;
 import com.edunova.module.admin.student.service.AcademicYearService;
+import com.edunova.module.superadmin.entity.User;
+import com.edunova.module.superadmin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -41,6 +43,7 @@ public class AttendanceService {
     private final SectionRepository sectionRepository;
     private final AcademicYearService academicYearService;
     private final AttendanceMapper mapper;
+    private final UserRepository userRepository;
 
     // ── Mark bulk attendance for section ──────────────────────
     @Transactional
@@ -108,14 +111,13 @@ public class AttendanceService {
         log.info("Attendance marked for section [{}] date [{}] — {} records",
                 section.getName(), request.getDate(), saved.size());
 
-        return buildSectionResponse(section, request.getDate(), saved);
+        return buildSectionResponse(section, request.getDate(), saved, Map.of());
     }
 
     // ── Get section attendance for a date ─────────────────────
-    public AttendanceDto.SectionAttendanceResponse getSectionAttendance(
-            UUID sectionId, LocalDate date) {
+    public AttendanceDto.SectionAttendanceResponse getSectionAttendance(UUID sectionId, LocalDate date) {
 
-        UUID schoolId = TenantContext.getTenantId();
+        UUID schoolId = LoggedInUserContextDetails.getCurrentUser().getSchoolId();//TenantContext.getTenantId();
 
         Section section = sectionRepository
                 .findByIdAndSchoolId(sectionId, schoolId)
@@ -127,7 +129,43 @@ public class AttendanceService {
         List<Attendance> records = attendanceRepository
                 .findBySectionAndDate(sectionId, targetDate);
 
-        return buildSectionResponse(section, targetDate, records);
+        return buildSectionResponse(section, targetDate, records, Map.of());
+    }
+
+    // ── Get ALl attendance status for a date ─────────────────────
+    public List<AttendanceDto.SectionAttendanceResponse> getAttendanceStatus(LocalDate date) {
+        List<AttendanceDto.SectionAttendanceResponse> attendanceStatusList = new ArrayList<>();
+        UUID schoolId = LoggedInUserContextDetails.getCurrentUser().getSchoolId();//TenantContext.getTenantId();
+
+        List<Section> sectionList = sectionRepository.findSectionsWithStudents(schoolId);
+
+        if (sectionList.isEmpty()) {
+            return attendanceStatusList;
+        }
+
+        LocalDate targetDate = date != null ? date : LocalDate.now();
+
+        var sectionIds = sectionList.stream().map(Section::getId).collect(Collectors.toList());
+
+        List<Attendance> records = attendanceRepository.findByAllSectionAndDate(sectionIds, targetDate);
+        Set<UUID> markedByUsers = records.stream().map(Attendance::getMarkedBy).collect(Collectors.toSet());
+        var users = userRepository.findUserById(markedByUsers);
+
+        Map<UUID, String> userMap = users.stream().collect(Collectors.toMap(User::getId, User::getFullName));
+
+        Map<UUID, List<Attendance>> attendanceBySection =
+                records.stream()
+                        .collect(Collectors.groupingBy(
+                                attendance -> attendance.getSection().getId()
+                        ));
+
+
+        for (Section section : sectionList) {
+            var data = buildSectionResponse(section, targetDate, attendanceBySection.getOrDefault(section.getId(), List.of()), userMap);
+            attendanceStatusList.add(data);
+        }
+
+        return attendanceStatusList;
     }
 
     // ── Get section attendance for a date ─────────────────────
@@ -301,7 +339,8 @@ public class AttendanceService {
     private AttendanceDto.SectionAttendanceResponse buildSectionResponse(
             Section section,
             LocalDate date,
-            List<Attendance> records) {
+            List<Attendance> records,
+            Map<UUID, String> userMap) {
 
         List<AttendanceDto.Response> responseList = records.stream()
                 .map(mapper::toResponse)
@@ -316,17 +355,22 @@ public class AttendanceService {
         long leaveCount   = records.stream()
                 .filter(a -> a.getStatus() == Attendance.AttendanceStatus.LEAVE).count();
 
+        var markedAt = records.isEmpty() ? null : records.get(0).getMarkedAt();
+        var markedById = records.isEmpty() ? null : records.get(0).getMarkedBy();
+
         return AttendanceDto.SectionAttendanceResponse.builder()
                 .sectionId(section.getId())
-                .sectionName(section.getName())
+                .sectionName(section.getDisplayName())
                 .gradeName(section.getGrade().getName())
                 .date(date)
-                .alreadyMarked(!records.isEmpty())
-                .totalStudents(records.size())
-                .presentCount((int) presentCount)
-                .absentCount((int) absentCount)
-                .lateCount((int) lateCount)
-                .leaveCount((int) leaveCount)
+                .markedAt(markedAt)
+                .markedBy(userMap.get(markedById))
+                .marked(!records.isEmpty())
+                .total(records.size())
+                .present((int) presentCount)
+                .absent((int) absentCount)
+                .late((int) lateCount)
+                .leave((int) leaveCount)
                 .records(responseList)
                 .build();
     }

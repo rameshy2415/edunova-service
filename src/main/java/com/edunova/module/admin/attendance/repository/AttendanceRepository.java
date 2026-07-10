@@ -30,6 +30,16 @@ public interface AttendanceRepository extends JpaRepository<Attendance, UUID> {
     """)
     List<Attendance> findBySectionAndDate(UUID sectionId, LocalDate date);
 
+    // All attendance for a section on a date
+    @Query("""
+        SELECT a FROM Attendance a
+        JOIN FETCH a.student s
+        WHERE a.section.id in (:sectionIds)
+        AND a.date = :date
+        ORDER BY s.name ASC
+    """)
+    List<Attendance> findByAllSectionAndDate(List<UUID> sectionIds, LocalDate date);
+
     // Student attendance between two dates
     @Query("""
         SELECT a FROM Attendance a
