@@ -99,27 +99,27 @@ public class SuperAdminController {
 
     @Operation(summary = "Suspend a school — disables all logins and sets subscription to SUSPENDED")
     @PostMapping("/schools/{id}/suspend")
-    public ResponseEntity<ApiResponse> suspendSchool(
+    public ResponseEntity<NormalApiResponse> suspendSchool(
             @PathVariable UUID id,
             @RequestBody(required = false) java.util.Map<String, String> body
     ) {
         String reason = body != null ? body.getOrDefault("reason", "Suspended by super admin") : "";
         superAdminService.suspendSchool(id, reason);
-        return ResponseEntity.ok(ApiResponse.ok("School suspended successfully."));
+        return ResponseEntity.ok(NormalApiResponse.ok("School suspended successfully."));
     }
 
     @Operation(summary = "Reinstate a previously suspended school")
     @PostMapping("/schools/{id}/reinstate")
-    public ResponseEntity<ApiResponse> reinstateSchool(@PathVariable UUID id) {
+    public ResponseEntity<NormalApiResponse> reinstateSchool(@PathVariable UUID id) {
         superAdminService.reinstateSchool(id);
-        return ResponseEntity.ok(ApiResponse.ok("School reinstated successfully."));
+        return ResponseEntity.ok(NormalApiResponse.ok("School reinstated successfully."));
     }
 
     @Operation(summary = "Permanently delete a school and all its data")
     @DeleteMapping("/schools/{id}")
-    public ResponseEntity<ApiResponse> deleteSchool(@PathVariable UUID id) {
+    public ResponseEntity<NormalApiResponse> deleteSchool(@PathVariable UUID id) {
         superAdminService.deleteSchool(id);
-        return ResponseEntity.ok(ApiResponse.ok("School deleted permanently."));
+        return ResponseEntity.ok(NormalApiResponse.ok("School deleted permanently."));
     }
 
     // ════════════════════════════════════════════════════════════
@@ -171,12 +171,12 @@ public class SuperAdminController {
 
     @Operation(summary = "Cancel a subscription")
     @PostMapping("/subscriptions/{id}/cancel")
-    public ResponseEntity<ApiResponse> cancelSubscription(
+    public ResponseEntity<NormalApiResponse> cancelSubscription(
             @PathVariable UUID id,
             @Valid @RequestBody CancelSubscriptionRequest request
     ) {
         superAdminService.cancelSubscription(id, request.reason());
-        return ResponseEntity.ok(ApiResponse.ok("Subscription cancelled."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Subscription cancelled."));
     }
 
     @Operation(summary = "List all available subscription plans")
@@ -229,30 +229,30 @@ public class SuperAdminController {
 
     @Operation(summary = "Send password reset email to admin")
     @PostMapping("/admins/{id}/reset-password")
-    public ResponseEntity<ApiResponse> resetAdminPassword(@PathVariable UUID id) {
+    public ResponseEntity<NormalApiResponse> resetAdminPassword(@PathVariable UUID id) {
         superAdminService.resetAdminPassword(id);
-        return ResponseEntity.ok(ApiResponse.ok("Password reset email sent."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Password reset email sent."));
     }
 
     @Operation(summary = "Resend welcome email with new temporary credentials")
     @PostMapping("/admins/{id}/resend-welcome")
-    public ResponseEntity<ApiResponse> resendWelcome(@PathVariable UUID id) {
+    public ResponseEntity<NormalApiResponse> resendWelcome(@PathVariable UUID id) {
         superAdminService.resendWelcomeEmail(id);
-        return ResponseEntity.ok(ApiResponse.ok("Welcome email resent."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Welcome email resent."));
     }
 
     @Operation(summary = "Disable an admin account — prevents login")
     @PostMapping("/admins/{id}/disable")
-    public ResponseEntity<ApiResponse> disableAdmin(@PathVariable UUID id) {
+    public ResponseEntity<NormalApiResponse> disableAdmin(@PathVariable UUID id) {
         superAdminService.disableAdmin(id);
-        return ResponseEntity.ok(ApiResponse.ok("Admin account disabled."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Admin account disabled."));
     }
 
     @Operation(summary = "Re-enable a previously disabled admin account")
     @PostMapping("/admins/{id}/enable")
-    public ResponseEntity<ApiResponse> enableAdmin(@PathVariable UUID id) {
+    public ResponseEntity<NormalApiResponse> enableAdmin(@PathVariable UUID id) {
         superAdminService.enableAdmin(id);
-        return ResponseEntity.ok(ApiResponse.ok("Admin account enabled."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Admin account enabled."));
     }
 
     // ════════════════════════════════════════════════════════════

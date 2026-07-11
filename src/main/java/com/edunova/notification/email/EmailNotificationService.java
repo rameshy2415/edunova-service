@@ -1,7 +1,7 @@
 package com.edunova.notification.email;
 
 
-import com.edunova.module.admin.student.dto.StudentDto;
+import com.edunova.module.student.dto.StudentDto;
 import com.edunova.module.superadmin.model.UserSchoolDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

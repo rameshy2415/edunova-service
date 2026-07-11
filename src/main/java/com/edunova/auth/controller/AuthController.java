@@ -53,10 +53,10 @@ public class AuthController {
 
     @Operation(summary = "Forgot password — send reset email")
     @PostMapping("/forgot-password")
-    public ResponseEntity<ApiResponse> forgotPassword(
+    public ResponseEntity<NormalApiResponse> forgotPassword(
             @RequestBody Map<String, String> body) {
         authService.forgotPassword(body.get("email"));
-        return ResponseEntity.ok(ApiResponse.ok("If that email is registered, a reset link has been sent."));
+        return ResponseEntity.ok(NormalApiResponse.ok("If that email is registered, a reset link has been sent."));
     }
 
 
@@ -81,22 +81,22 @@ public class AuthController {
 
     @Operation(summary = "Reset password using token from email")
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse> resetPassword(
+    public ResponseEntity<NormalApiResponse> resetPassword(
             @Valid @RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request.token(), request.newPassword());
-        return ResponseEntity.ok(ApiResponse.ok("Password updated successfully."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Password updated successfully."));
     }
 
     // ── POST /auth/logout ──────────────────────────────────────
 
     @Operation(summary = "Logout (client-side token discard)")
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<NormalApiResponse> logout(HttpServletRequest request, HttpServletResponse response) {
         // Stateless JWT — client discards tokens.
         // Add token blacklist here if needed.
         SecurityContextHolder.clearContext();
         new SecurityContextLogoutHandler().logout(request, response, null);
-        return ResponseEntity.ok(ApiResponse.ok("Logged out successfully."));
+        return ResponseEntity.ok(NormalApiResponse.ok("Logged out successfully."));
     }
 
     // ── GET /auth/me ───────────────────────────────────────────

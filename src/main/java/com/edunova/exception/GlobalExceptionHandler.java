@@ -2,6 +2,7 @@ package com.edunova.exception;
 
 
 import com.edunova.common.dto.ApiResponse;
+import com.edunova.common.dto.NormalApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,23 +21,23 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<com.edunova.module.admin.student.dto.ApiResponse<Void>> handleAppException(AppException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleAppException(AppException ex) {
         log.warn("AppException: [{}] {}", ex.getErrorCode().getCode(), ex.getMessage());
         return ResponseEntity
                 .status(ex.getErrorCode().getHttpStatus())
-                .body(com.edunova.module.admin.student.dto.ApiResponse.error(ex.getMessage(), ex.getErrorCode().getCode()));
+                .body(ApiResponse.error(ex.getMessage(), ex.getErrorCode().getCode()));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> handleNotFound(ResourceNotFoundException ex) {
+    public ResponseEntity<NormalApiResponse> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error(ex.getMessage()));
+                .body(NormalApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ApiResponse> handleConflict(ConflictException ex) {
+    public ResponseEntity<NormalApiResponse> handleConflict(ConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ApiResponse.error(ex.getMessage()));
+                .body(NormalApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(BusinessException.class)
@@ -46,21 +47,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ApiResponse> handleBadCredentials(BadCredentialsException ex) {
+    public ResponseEntity<NormalApiResponse> handleBadCredentials(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.error("Invalid email or password."));
+                .body(NormalApiResponse.error("Invalid email or password."));
     }
 
     @ExceptionHandler(DisabledException.class)
-    public ResponseEntity<ApiResponse> handleDisabled(DisabledException ex) {
+    public ResponseEntity<NormalApiResponse> handleDisabled(DisabledException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.error("Account is disabled. Please contact support."));
+                .body(NormalApiResponse.error("Account is disabled. Please contact support."));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<NormalApiResponse> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.error("You do not have permission to perform this action."));
+                .body(NormalApiResponse.error("You do not have permission to perform this action."));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -74,9 +75,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse> handleGeneric(Exception ex) {
+    public ResponseEntity<NormalApiResponse> handleGeneric(Exception ex) {
         log.error("Unhandled exception", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("An unexpected error occurred. Please try again."));
+                .body(NormalApiResponse.error("An unexpected error occurred. Please try again."));
     }
 }

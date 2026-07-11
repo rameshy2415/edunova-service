@@ -1,7 +1,7 @@
 package com.edunova.module.superadmin.mapper;
 
 
-import com.edunova.module.admin.student.entity.AcademicYear;
+import com.edunova.module.student.entity.AcademicYear;
 import com.edunova.module.superadmin.entity.School;
 import com.edunova.module.superadmin.model.AcademicYearDto;
 import com.edunova.module.superadmin.model.SchoolDto;

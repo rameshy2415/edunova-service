@@ -5,7 +5,7 @@ import com.edunova.auth.dto.AuthRequest;
 import com.edunova.common.dto.AuthResponse;
 import com.edunova.common.dto.UserSummaryResponse;
 import com.edunova.exception.BusinessException;
-import com.edunova.module.admin.student.repository.AcademicYearRepository;
+import com.edunova.module.student.repository.AcademicYearRepository;
 import com.edunova.module.superadmin.entity.User;
 import com.edunova.module.superadmin.repository.UserRepository;
 import com.edunova.notification.email.EmailNotificationService;
