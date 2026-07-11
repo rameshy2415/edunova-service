@@ -88,6 +88,7 @@ public class SuperAdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
+    //TODO Admin Edit is not Working Request Does not hold Admin details which is coming from UI
     @Operation(summary = "Update school information")
     @PutMapping("/schools/{id}")
     public ResponseEntity<SchoolResponse> updateSchool(

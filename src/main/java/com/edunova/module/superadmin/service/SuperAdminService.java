@@ -80,10 +80,12 @@ public class SuperAdminService {
                 students, teachers, mrr);
     }
 
+
+
     // ════════════════════════════════════════════════════════════
     //  SCHOOLS
     // ════════════════════════════════════════════════════════════
-
+    //TODO need re-write to many Repo is getting called
     public PagedResponse<SchoolSummaryResponse> getSchools(
             String search, Boolean isActive, int page, int size) {
 
@@ -603,8 +605,8 @@ public class SuperAdminService {
             planName   = sub.get().getPlan().getName();
             planStatus = sub.get().getStatus();
         }
-        List<User> admins     = userRepository.findAdminsBySchoolId(s.getId());
-        String adminName  = admins.isEmpty() ? null : admins.get(0).getFirstName()+" "+admins.get(0).getFirstName();
+        List<User> admins     = userRepository.findAdminsBySchoolId(s.getId()); //TODO Need to Revisit
+        String adminName  = admins.isEmpty() ? null : admins.get(0).getFullName();
         String adminEmail = admins.isEmpty() ? null : admins.get(0).getEmail();
 
         return new SchoolSummaryResponse(
@@ -643,7 +645,7 @@ public class SuperAdminService {
 
     private AdminUserResponse toAdminResponse(User u) {
         return new AdminUserResponse(
-                u.getId(), u.getEmail(), u.getEmail(), u.getMobile(),
+                u.getId(), u.getFullName(), u.getEmail(), u.getMobile(),
                 u.getSchool() != null ? u.getSchool().getId()   : null,
                 u.getSchool() != null ? u.getSchool().getName() : null,
                 u.getIsActive(), u.getLastLoginAt(), u.getCreatedAt());
