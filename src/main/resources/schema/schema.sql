@@ -553,6 +553,7 @@ CREATE TABLE fee_categories (
     is_recurring    BOOLEAN     NOT NULL DEFAULT TRUE,
     sort_order      SMALLINT    NOT NULL DEFAULT 0,
     is_active       BOOLEAN     NOT NULL DEFAULT TRUE,
+    created_at  TIMESTAMP     NOT NULL DEFAULT NOW(), --Added
     UNIQUE (school_id, name)
 );
 
